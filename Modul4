@@ -1,0 +1,551 @@
+<Window x:Class="SuperMarketProg2.Authorization"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SuperMarketProg2"
+        mc:Ignorable="d"
+        Title="Authorization" Height="450" Width="500" WindowStartupLocation="CenterScreen" MaxHeight="450" MaxWidth="500">
+    <Grid>
+        <StackPanel>
+            <Label Content="Авторизация" Width="249" Height="90" Margin="20" FontSize="40"/>
+            <Label Content="Логин:" Width="48"/>
+            <TextBox Width="203" Name="Logintxb"/>
+            <Label Content="Пароль:" Width="56"/>
+            <TextBox Width="203" Name="Passwordtxb"/>
+            <Button Width="200" Height="20" Margin="50" Name="Enterbtn" Click="Enterbtn_Click" Content="Войти"/>
+        </StackPanel>
+    </Grid>
+</Window>
+
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2
+{
+    /// <summary>
+    /// Логика взаимодействия для Authorization.xaml
+    /// </summary>
+    public partial class Authorization : Window
+    {
+        public Authorization()
+        {
+            InitializeComponent();
+        }
+
+        private void Enterbtn_Click(object sender, RoutedEventArgs e)
+        {
+                using (var context = new SupermarketDBEntities1())
+                {
+                string login = Logintxb.Text.Trim();
+                int password = Convert.ToInt32(Passwordtxb.Text.Trim());
+                    var user = context.Users
+                        .FirstOrDefault(u => u.Login == login && u.Password == password);
+                    if (user != null && user.RoleID == 1)
+                    {
+                        MainWindow mainWindow = new MainWindow();
+                        mainWindow.Show();
+                        this.Close();
+                    }
+                    if (user != null && user.RoleID == 2)
+                    {
+                        HelloUser hellouser = new HelloUser();
+                        hellouser.Show();
+                        this.Close();
+                    }
+               
+                } 
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SuperMarketProg2.AppdataFile
+{
+    class ConnectOdb
+    {
+        public static SupermarketDBEntities1 supObj;
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+
+namespace SuperMarketProg2.AppdataFile
+{
+    class FrameObj
+    {
+        public static Frame Framemain;
+    }
+}
+
+
+<Window x:Class="SuperMarketProg2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SuperMarketProg2"
+        mc:Ignorable="d"
+        Title="Админ-панель Супермаркета" Height="700" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23*"/>
+            <RowDefinition Height="200*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Background="Gray" Orientation="Horizontal">
+            <Image Source=".//Resources/vecteezy_shopping-mall-png-graphic-clipart-design_20001974.png"
+               Width="80" Margin="10 0 0 0" HorizontalAlignment="Left"/>
+            <Button  x:Name="btnBack" Click="btnBack_Click" Content="Назад"
+                Width="150" Height="30" FontSize="17" Foreground="White"
+                Background="RosyBrown" Margin="530 0 0 0" FontFamily="Tahoma"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+            <Image Source=".//Resources/vecteezy_shopping-mall-png-graphic-clipart-design_20001974.png"
+               Opacity="0.4"
+               Width="600"/>
+        </StackPanel>
+        <Frame x:Name="FrmMain" Grid.Row="1" NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window>
+
+using SuperMarketProg2.AppdataFile;
+using SuperMarketProg2.Pages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2
+{
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            ConnectOdb.supObj = new SupermarketDBEntities1();
+            FrameObj.Framemain = FrmMain;
+
+            FrmMain.Navigate(new PageMain());
+        }
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            FrameObj.Framemain.GoBack();
+        }
+    }
+}
+
+<Page x:Class="SuperMarketProg2.Pages.PageMain"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SuperMarketProg2.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageMain">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <Button 
+                    Content="Поставщики"
+                    Name="btnSuppliers"
+                    Style="{StaticResource mainBtn}"
+                    Click="btnSuppliers_Click"/>
+                <Button 
+                    Content="Товары"
+                    Name="btnProducts"
+                    Style="{StaticResource mainBtn}"
+                    Click="btnProducts_Click"/>
+                <Button 
+                    Content="Добавление товаров"
+                    Name="btnAddProducts"
+                    Style="{StaticResource mainBtn}"/>
+                <Button 
+                    Content="Складские операции"
+                    Name="btnTransactions"
+                    Style="{StaticResource mainBtn}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
+
+using SuperMarketProg2.AppdataFile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2.Pages
+{
+    /// <summary>
+    /// Логика взаимодействия для PageMain.xaml
+    /// </summary>
+    public partial class PageMain : Page
+    {
+        public PageMain()
+        {
+            InitializeComponent();
+        }
+        private void btnProducts_Click(object sender, RoutedEventArgs e)
+        {
+            FrameObj.Framemain.Navigate(new PageProduct());
+        }
+
+        private void btnSuppliers_Click(object sender, RoutedEventArgs e)
+        {
+            FrameObj.Framemain.Navigate(new PageSuppliers());
+        }
+    }
+}
+
+
+<Page x:Class="SuperMarketProg2.Pages.PageSuppliers"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SuperMarketProg2.Pages"
+      mc:Ignorable="d" 
+      Loaded="Page_Loaded"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageSuppliers">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <Label Content="Страница Поставщиков" FontSize="30" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="1">
+            <Label Content="Поиск" Width="57" FontSize="15"/>
+            <TextBox x:Name="Searchtxb" Width="334" TextChanged="Searchtxb_TextChanged"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  x:Name="SuppliersGrid">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding SupplierID}"/>
+                <DataGridTextColumn Header="Название" Binding="{Binding SupplierName}"/>
+                <DataGridTextColumn Header="Контактное лицо" Binding="{Binding ContactPerson}"/>
+                <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}"/>
+                <DataGridTextColumn Header="Почта" Binding="{Binding Email}"/>
+                <DataGridTextColumn Header="Адрес" Binding="{Binding Address}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button x:Name="AddSupp" Content="Добавить" Click="AddSupp_Click" Grid.Row="3" Width="200" Height="40" Margin="75,10,525,10"/>
+        <Button x:Name="EditSupp" Content="Изменить" Click="EditSupp_Click" Grid.Row="3" Width="200" Height="40" Margin="300,10,300,10"/>
+        <Button x:Name="DeleteSupp" Content="Удалить" Click="DeleteSupp_Click" Grid.Row="3" Width="200" Height="40" Margin="529,10,71,10"/>
+    </Grid>
+</Page>
+
+using SuperMarketProg2.AppdataFile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2.Pages
+{
+    /// <summary>
+    /// Логика взаимодействия для PageSuppliers.xaml
+    /// </summary>
+    public partial class PageSuppliers : Page
+    {
+        public PageSuppliers()
+        {
+            InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            SuppliersGrid.ItemsSource = ConnectOdb.supObj.Suppliers.ToList();
+        }
+
+        private void AddSupp_Click(object sender, RoutedEventArgs e)
+        {
+            FrameObj.Framemain.Navigate(new PageEditSupp());
+        }
+
+        private void EditSupp_Click(object sender, RoutedEventArgs e)
+        {
+                var Supp = SuppliersGrid.SelectedItem as Suppliers;
+            if (Supp != null)
+            {
+                NavigationService.Navigate(new PageAddSupp(Supp));
+            }
+            else
+            {
+                MessageBox.Show("Не выбран поставщик");
+            }
+        }
+
+        private void DeleteSupp_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Вы действительно хотите удалить поставщика?", "Уведомление", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                var Supp = SuppliersGrid.SelectedItem as Suppliers;
+                ConnectOdb.supObj.Suppliers.Remove(Supp);
+                ConnectOdb.supObj.SaveChanges();
+
+                SuppliersGrid.ItemsSource = ConnectOdb.supObj.Suppliers.ToList();
+                MessageBox.Show("Успешно");
+            }
+        }
+
+        private void Searchtxb_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SuppliersGrid.ItemsSource = ConnectOdb.supObj.Suppliers.Where(item => item.SupplierName == Searchtxb.Text || item.SupplierName.Contains(Searchtxb.Text)).ToList();
+        }
+    }
+}
+
+
+<Page x:Class="SuperMarketProg2.Pages.PageAddSupp"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SuperMarketProg2.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageAddSupp">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Label Content="Редактирование поставщика" HorizontalAlignment="Center" FontSize="20" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <Label Content="Название" Height="31" Width="83" FontSize="15"/>
+            <TextBox x:Name="Nametxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Label Content="Контактное лицо" Height="31" Width="129" FontSize="15"/>
+            <TextBox x:Name="Conttxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3">
+            <Label Content="Телефон" Height="31" Width="77" FontSize="15"/>
+            <TextBox x:Name="Phonetxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4">
+            <Label Content="Почта" Height="31" Width="56" FontSize="15"/>
+            <TextBox x:Name="Emailtxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="5">
+            <Label Content="Адрес" Height="31" Width="59" FontSize="15"/>
+            <TextBox x:Name="Addresstxb" Width="298" Height="30"/>
+        </StackPanel>
+        <Button Grid.Row="6" Content="Изменить" Width="200" Height="40" x:Name="EditSupp" Click="EditSupp_Click"/>
+    </Grid>
+</Page>
+
+using SuperMarketProg2.AppdataFile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2.Pages
+{
+    /// <summary>
+    /// Логика взаимодействия для PageAddSupp.xaml
+    /// </summary>
+    public partial class PageAddSupp : Page
+    {
+        public PageAddSupp(Suppliers Supp)
+        {
+            InitializeComponent();
+            Nametxb.Text = Supp.SupplierName.Trim();
+            Conttxb.Text = Supp.ContactPerson.Trim();
+            Phonetxb.Text = Supp.Phone.Trim();
+            Emailtxb.Text = Supp.Email.Trim(); 
+            Addresstxb.Text = Supp.Address.Trim();
+        }
+
+            private void EditSupp_Click(object sender, RoutedEventArgs e)
+            {
+            MessageBox.Show("Пользователь успешно изменен");
+            NavigationService.GoBack();
+            }
+    }
+}
+
+
+<Page x:Class="SuperMarketProg2.Pages.PageEditSupp"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SuperMarketProg2.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageEditSupp">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Label Content="Добавление поставщика" HorizontalAlignment="Center" FontSize="20" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <Label Content="Название" Height="31" Width="83" FontSize="15"/>
+            <TextBox x:Name="Nametxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Label Content="Контактное лицо" Height="31" Width="129" FontSize="15"/>
+            <TextBox x:Name="Conttxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3">
+            <Label Content="Телефон" Height="31" Width="77" FontSize="15"/>
+            <TextBox x:Name="Phonetxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4">
+            <Label Content="Почта" Height="31" Width="56" FontSize="15"/>
+            <TextBox x:Name="Emailtxb" Width="298" Height="30"/>
+        </StackPanel>
+        <StackPanel Grid.Row="5">
+            <Label Content="Адрес" Height="31" Width="59" FontSize="15"/>
+            <TextBox x:Name="Addresstxb" Width="298" Height="30"/>
+        </StackPanel>
+        <Button Grid.Row="6" Content="Добавить" Width="200" Height="40" x:Name="AddSupp" Click="AddSupp_Click"/>
+    </Grid>
+</Page>
+
+using SuperMarketProg2.AppdataFile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SuperMarketProg2.Pages
+{
+    /// <summary>
+    /// Логика взаимодействия для PageEditSupp.xaml
+    /// </summary>
+    public partial class PageEditSupp : Page
+    {
+        public PageEditSupp()
+        {
+            InitializeComponent();
+        }
+
+        private void AddSupp_Click(object sender, RoutedEventArgs e)
+        {
+            Suppliers Supp = new Suppliers();
+            Supp.SupplierName = Nametxb.Text;
+            Supp.ContactPerson = Conttxb.Text;
+            Supp.Phone = Phonetxb.Text;
+            Supp.Email = Emailtxb.Text;
+            Supp.Address = Addresstxb.Text;
+            ConnectOdb.supObj.Suppliers.Add(Supp);
+            ConnectOdb.supObj.SaveChanges();
+            MessageBox.Show("Поставщик был успешно добавлен");
+            NavigationService.GoBack();
+        }
+    }
+}
+
+
+
+
+
+
+
